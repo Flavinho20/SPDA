@@ -1,0 +1,38 @@
+import pandas as pd
+import streamlit as st
+import io
+
+# Dados de exemplo
+dados = {
+    "Fator de Risco": ["Localização Geográfica", "Tipo de Construção", "Equipamentos Sensíveis", "Histórico de Descargas", "Medidas de Proteção Atuais"],
+    "Descrição": ["Área com alta incidência de descargas atmosféricas", "Estrutura metálica", "Computadores e servidores", "Várias descargas registradas nos últimos anos", "Proteção básica"],
+    "Probabilidade de Ocorrência": ["Alta", "Média", "Alta", "Alta", "Baixa"],
+    "Gravidade do Impacto": ["Alta", "Média", "Alta", "Alta", "Média"],
+    "Medidas de Mitigação Recomendadas": ["Instalar para-raios adicionais", "Melhorar a conexão à terra", "Usar proteção contra surtos", "Realizar inspeções regulares", "Atualizar para tecnologia moderna"]
+}
+
+# Criação do DataFrame
+df = pd.DataFrame(dados)
+
+# Aplicativo Streamlit
+st.title("Análise de Risco SPDA")
+
+st.write("Tabela de Análise de Risco:")
+st.dataframe(df)
+
+# Função para exportar o DataFrame para Excel
+def to_excel(df):
+    output = io.BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    df.to_excel(writer, index=False, sheet_name='Sheet1')
+    writer.save()
+    processed_data = output.getvalue()
+    return processed_data
+
+# Botão para baixar o DataFrame como Excel
+st.download_button(
+    label="Baixar tabela como Excel",
+    data=to_excel(df),
+    file_name="analise_risco_spda.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+)
